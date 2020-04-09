@@ -1,6 +1,7 @@
 package main
 
 import (
+	"LikeTistory/dispatch"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -55,8 +56,10 @@ func fetch(url string, entryId int, target interface{}) interface{} {
 }
 
 func main() {
-	url := "https://gmyankee.tistory.com/reaction"
-	result := Response{}
-	res := fetch(url, 291, result)
-	fmt.Printf("%+v\n", res)
+	//url := "https://gmyankee.tistory.com/reaction"
+	id := "gmyankee"
+	dispatch.PostParser(id)
+	//result := Response{}
+	//res := fetch(url, 291, result)
+	//fmt.Printf("%+v\n", res)
 }
