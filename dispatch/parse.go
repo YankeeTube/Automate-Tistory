@@ -10,20 +10,20 @@ import (
 	"strconv"
 )
 
-func PostParser(id string) {
+func PostParser(id string) []string {
 	var (
-		links    []string
+		ids      []string
 		lastPage int
 	)
-	links, lastPage = GetInitialData(id)
-	fmt.Println(links)
-	fmt.Println(lastPage)
-	//for page := 1; page < lastPage; page++{
-	//	url := fmt.Sprintf("https://search.daum.net/search?nil_suggest=btn&w=blog&DA=PGD&q=site:%s.tistory.com&page=%d", id, page)
-	//	resp := Fetch(url)
-	//	pageLinks, _ := DocumentsExtract(resp)
-	//	links = append(links, pageLinks)
-	//}
+	ids, lastPage = GetInitialData(id)
+	for page := 1; page < lastPage; page++ {
+		url := fmt.Sprintf("https://search.daum.net/search?nil_suggest=btn&w=blog&DA=PGD&q=site:%s.tistory.com&page=%d", id, page)
+		resp := Fetch(url)
+		pageIds, _ := DocumentsExtract(resp)
+		ids = append(ids, pageIds...)
+	}
+	//fmt.Println(ids)
+	return ids
 }
 
 func Fetch(url string) *http.Response {
@@ -35,7 +35,7 @@ func Fetch(url string) *http.Response {
 }
 
 func DocumentsExtract(resp *http.Response) ([]string, *goquery.Document) {
-	var links []string
+	var ids []string
 	regex, _ := regexp.Compile("/([0-9]+)")
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
@@ -43,20 +43,20 @@ func DocumentsExtract(resp *http.Response) ([]string, *goquery.Document) {
 	}
 	doc.Find(".f_url").Each(func(i int, selection *goquery.Selection) {
 		link, ok := selection.Attr("href")
-		if ok {
-			fmt.Println(regex.FindStringSubmatch(link)[1])
-			links = append(links, link)
+		entryId := regex.FindStringSubmatch(link)
+		if ok && len(entryId) > 1 {
+			ids = append(ids, entryId[1])
 		}
 	})
-	return links, doc
+	return ids, doc
 }
 
 func GetInitialData(id string) ([]string, int) {
 	url := fmt.Sprintf("https://search.daum.net/search?nil_suggest=btn&w=blog&DA=PGD&q=site:%s.tistory.com&page=1", id)
 	resp := Fetch(url)
-	links, doc := DocumentsExtract(resp)
+	ids, doc := DocumentsExtract(resp)
 	lastPage := GetLastPage(doc)
-	return links, lastPage
+	return ids, lastPage
 }
 
 func GetLastPage(doc *goquery.Document) int {
