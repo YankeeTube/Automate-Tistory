@@ -11,6 +11,10 @@ import (
 )
 
 func PostParser(id string) []string {
+	/*
+		Get Tistory Entry IDS
+		Please you must set to number address!
+	*/
 	var (
 		ids      []string
 		lastPage int
