@@ -87,7 +87,5 @@ func CheckEntryCount(id string, entryId string, target int) int {
 	if result.ReactionCounter.Like >= target {
 		return target
 	}
-	fmt.Printf("%s\n", body)
-	fmt.Printf("entry : %s / Like : %d\n", entryId, result.ReactionCounter.Like)
 	return result.ReactionCounter.Like
 }
