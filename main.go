@@ -46,19 +46,17 @@ func main() {
 	maxRange := *target - start
 	bar := pb.StartNew(maxRange)
 	wait.Add(maxRange)
-	go func() {
-		for x := start; x < *target; x++ {
-			bar.Increment()
-			time.Sleep(time.Duration(1) * time.Second)
-			result := dispatch.Response{}
-			dispatch.EntryFetch(*blog, entryId, &result)
-			if result.Content.ReactionCounter.Like > *target {
-				wait.Done()
-				break
-			}
+	for x := start; x < *target; x++ {
+		bar.Increment()
+		time.Sleep(time.Duration(500) * time.Millisecond)
+		result := dispatch.Response{}
+		dispatch.EntryFetch(*blog, entryId, &result)
+		if result.Content.ReactionCounter.Like > *target {
 			wait.Done()
+			break
 		}
-	}()
+		wait.Done()
+	}
 	bar.Finish()
 	wait.Wait()
 	fmt.Printf(InfoColor, "Clear!\n")
