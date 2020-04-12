@@ -74,8 +74,8 @@ func main() {
 				wait.Done()
 			}
 		}()
+		wait.Wait()
 	}
-	wait.Wait()
 	fmt.Println("Complete")
 
 	//res := fetch(url, 291, result)
